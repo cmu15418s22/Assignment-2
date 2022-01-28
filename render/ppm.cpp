@@ -1,20 +1,16 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
 #include <algorithm>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "image.h"
 #include "util.h"
 
-
-
 // writePPMImage --
 //
-// assumes input pixels are float4
-// write 3-channel (8 bit --> 24 bits per pixel) ppm
-void
-writePPMImage(const Image* image, const char *filename)
-{
+// Assumes input pixels are float4
+// Write 3-channel (8 bit --> 24 bits per pixel) ppm
+void writePPMImage(const Image *image, const char *filename) {
     FILE *fp = fopen(filename, "wb");
 
     if (!fp) {
@@ -22,15 +18,14 @@ writePPMImage(const Image* image, const char *filename)
         exit(1);
     }
 
-    // write ppm header
+    // Write ppm header
     fprintf(fp, "P6\n");
     fprintf(fp, "%d %d\n", image->width, image->height);
     fprintf(fp, "255\n");
 
-    for (int j=image->height-1; j>=0; j--) {
-        for (int i=0; i<image->width; i++) {
-
-            const float* ptr = &image->data[4 * (j*image->width + i)];
+    for (int j = image->height - 1; j >= 0; j--) {
+        for (int i = 0; i < image->width; i++) {
+            const float *ptr = &image->data[4 * (j * image->width + i)];
 
             char val[3];
             val[0] = static_cast<char>(255.f * CLAMP(ptr[0], 0.f, 1.f));

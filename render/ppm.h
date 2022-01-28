@@ -3,6 +3,6 @@
 
 struct Image;
 
-void writePPMImage(const Image* image, const char *filename);
+void writePPMImage(const Image *image, const char *filename);
 
 #endif

@@ -1,22 +1,23 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <getopt.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
 
-#include "refRenderer.h"
 #include "cudaRenderer.h"
 #include "platformgl.h"
+#include "refRenderer.h"
 
+void startRendererWithDisplay(CircleRenderer *renderer);
+void startBenchmark(CircleRenderer *renderer, int startFrame, int totalFrames,
+                    const std::string &frameFilename);
+void checkBenchmark(CircleRenderer *ref_renderer, CircleRenderer *cuda_renderer,
+                    int benchmarkFrameStart, int totalFrames,
+                    const std::string &frameFilename);
 
-void startRendererWithDisplay(CircleRenderer* renderer);
-void startBenchmark(CircleRenderer* renderer, int startFrame, int totalFrames, const std::string& frameFilename);
-void CheckBenchmark(CircleRenderer* ref_renderer, CircleRenderer* cuda_renderer,
-                        int benchmarkFrameStart, int totalFrames, const std::string& frameFilename);
-
-
-void usage(const char* progname) {
+void usage(const char *progname) {
     printf("Usage: %s [options] scenename\n", progname);
-    printf("Valid scenenames are: rgb, rgby, rand10k, rand100k, biglittle, littlebig, pattern, bouncingballs, fireworks, hypnosis, snow, snowsingle\n");
+    printf("Valid scenenames are: rgb, rgby, rand10k, rand100k, biglittle, littlebig, "
+           "pattern, bouncingballs, fireworks, hypnosis, snow, snowsingle\n");
     printf("Program Options:\n");
     printf("  -b  --bench <START:END>    Benchmark mode, do not create display. Time frames [START,END)\n");
     printf("  -c  --check                Check correctness of output\n");
@@ -26,10 +27,7 @@ void usage(const char* progname) {
     printf("  -?  --help                 This message\n");
 }
 
-
-int main(int argc, char** argv)
-{
-
+int main(int argc, char **argv) {
     int benchmarkFrameStart = -1;
     int benchmarkFrameEnd = -1;
     int imageSize = 1150;
@@ -41,20 +39,19 @@ int main(int argc, char** argv)
 
     bool checkCorrectness = false;
 
-    // parse commandline options ////////////////////////////////////////////
+    // Parse commandline options
     int opt;
     static struct option long_options[] = {
-        {"help",     0, 0,  '?'},
-        {"check",    0, 0,  'c'},
-        {"bench",    1, 0,  'b'},
-        {"file",     1, 0,  'f'},
-        {"renderer", 1, 0,  'r'},
-        {"size",     1, 0,  's'},
-        {0 ,0, 0, 0}
+        {"help", 0, 0, '?'},
+        {"check", 0, 0, 'c'},
+        {"bench", 1, 0, 'b'},
+        {"file", 1, 0, 'f'},
+        {"renderer", 1, 0, 'r'},
+        {"size", 1, 0, 's'},
+        {0, 0, 0, 0}
     };
 
     while ((opt = getopt_long(argc, argv, "b:f:r:s:c?", long_options, NULL)) != EOF) {
-
         switch (opt) {
         case 'b':
             if (sscanf(optarg, "%d:%d", &benchmarkFrameStart, &benchmarkFrameEnd) != 2) {
@@ -85,7 +82,6 @@ int main(int argc, char** argv)
     }
     // end parsing of commandline options //////////////////////////////////////
 
-
     if (optind + 1 > argc) {
         fprintf(stderr, "Error: missing scene name\n");
         usage(argv[0]);
@@ -113,12 +109,12 @@ int main(int argc, char** argv)
     } else if (sceneNameStr.compare("littlebig") == 0) {
         sceneName = LITTLE_BIG;
     } else if (sceneNameStr.compare("bouncingballs") == 0) {
-        sceneName = BOUNCING_BALLS;  
-    } else if (sceneNameStr.compare("hypnosis") == 0) { 
-        sceneName = HYPNOSIS;           
-    } else if (sceneNameStr.compare("fireworks") == 0) { 
-        sceneName = FIREWORKS;    
-    }else {
+        sceneName = BOUNCING_BALLS;
+    } else if (sceneNameStr.compare("hypnosis") == 0) {
+        sceneName = HYPNOSIS;
+    } else if (sceneNameStr.compare("fireworks") == 0) {
+        sceneName = FIREWORKS;
+    } else {
         fprintf(stderr, "Unknown scene name (%s)\n", sceneNameStr.c_str());
         usage(argv[0]);
         return 1;
@@ -126,13 +122,12 @@ int main(int argc, char** argv)
 
     printf("Rendering to %dx%d image\n", imageSize, imageSize);
 
-    CircleRenderer* renderer;
+    CircleRenderer *renderer;
 
     if (checkCorrectness) {
         // Need both the renderers
-
-        CircleRenderer* ref_renderer;
-        CircleRenderer* cuda_renderer;
+        CircleRenderer *ref_renderer;
+        CircleRenderer *cuda_renderer;
 
         ref_renderer = new RefRenderer();
         cuda_renderer = new CudaRenderer();
@@ -145,10 +140,9 @@ int main(int argc, char** argv)
         cuda_renderer->setup();
 
         // Check the correctness
-        CheckBenchmark(ref_renderer, cuda_renderer, 0, 1, frameFilename);
-    }
-    else {
+        checkBenchmark(ref_renderer, cuda_renderer, 0, 1, frameFilename);
 
+    } else {
         if (useRefRenderer)
             renderer = new RefRenderer();
         else

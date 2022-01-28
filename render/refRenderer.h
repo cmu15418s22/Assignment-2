@@ -3,26 +3,22 @@
 
 #include "circleRenderer.h"
 
-
 class RefRenderer : public CircleRenderer {
-
-private:
-
-    Image* image;
+  private:
+    Image *image;
     SceneName sceneName;
 
     int numberOfCircles;
-    float* position;
-    float* velocity;
-    float* color;
-    float* radius;
+    float *position;
+    float *velocity;
+    float *color;
+    float *radius;
 
-public:
-
+  public:
     RefRenderer();
     virtual ~RefRenderer();
 
-    const Image* getImage();
+    const Image *getImage();
 
     void setup();
 
@@ -36,14 +32,10 @@ public:
 
     void render();
 
-    void dumpParticles(const char* filename);
+    void dumpParticles(const char *filename);
 
-    void shadePixel(
-        float pixelCenterX, float pixelCenterY,
-        float px, float py, float pz,
-        float* pixelData,
-        int circleIndex);
+    void shadePixel(float pixelCenterX, float pixelCenterY, float px, float py, float pz,
+                    float *pixelData, int circleIndex);
 };
-
 
 #endif

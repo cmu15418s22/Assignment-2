@@ -8,34 +8,29 @@
 
 extern float toBW(int bytes, float sec);
 
-__global__ void
-saxpy_kernel(int N, float alpha, float* x, float* y, float* result) {
-
-    // compute overall index from position of thread in current block,
+__global__ void saxpy_kernel(int N, float alpha, float *x, float *y, float *result) {
+    // Compute overall index from position of thread in current block,
     // and given the block we are in
     int index = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (index < N)
-       result[index] = alpha * x[index] + y[index];
+        result[index] = alpha * x[index] + y[index];
 }
 
-void
-saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) {
-
+void saxpyCuda(int N, float alpha, float *xarray, float *yarray, float *resultarray) {
     int totalBytes = sizeof(float) * 3 * N;
 
-    // compute number of blocks and threads per block
+    // Compute number of blocks and threads per block
     const int threadsPerBlock = 512;
     const int blocks = (N + threadsPerBlock - 1) / threadsPerBlock;
 
-    float* device_x;
-    float* device_y;
-    float* device_result;
+    float *device_x;
+    float *device_y;
+    float *device_result;
 
     //
     // TODO allocate device memory buffers on the GPU using cudaMalloc
     //
-
 
     // start timing after allocation of device memory
     double startTime = CycleTimer::currentSeconds();
@@ -43,7 +38,6 @@ saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) 
     //
     // TODO copy input arrays to the GPU using cudaMemcpy
     //
-
 
     // run kernel
     saxpy_kernel<<<blocks, threadsPerBlock>>>(N, alpha, device_x, device_y, device_result);
@@ -65,13 +59,10 @@ saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) 
     printf("Overall: %.3f ms\t\t[%.3f GB/s]\n", 1000.f * overallDuration, toBW(totalBytes, overallDuration));
 
     // TODO free memory buffers on the GPU
-
 }
 
-void
-printCudaInfo() {
-
-    // for fun, just print out some stats on the machine
+void printCudaInfo() {
+    // For fun, just print out some stats on the machine
 
     int deviceCount = 0;
     cudaError_t err = cudaGetDeviceCount(&deviceCount);
@@ -79,13 +70,12 @@ printCudaInfo() {
     printf("---------------------------------------------------------\n");
     printf("Found %d CUDA devices\n", deviceCount);
 
-    for (int i=0; i<deviceCount; i++) {
+    for (int i = 0; i < deviceCount; i++) {
         cudaDeviceProp deviceProps;
         cudaGetDeviceProperties(&deviceProps, i);
         printf("Device %d: %s\n", i, deviceProps.name);
         printf("   SMs:        %d\n", deviceProps.multiProcessorCount);
-        printf("   Global mem: %.0f MB\n",
-               static_cast<float>(deviceProps.totalGlobalMem) / (1024 * 1024));
+        printf("   Global mem: %.0f MB\n", static_cast<float>(deviceProps.totalGlobalMem) / (1024 * 1024));
         printf("   CUDA Cap:   %d.%d\n", deviceProps.major, deviceProps.minor);
     }
     printf("---------------------------------------------------------\n");
