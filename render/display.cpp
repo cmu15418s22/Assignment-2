@@ -5,9 +5,7 @@
 #include "image.h"
 #include "platformgl.h"
 
-
 void renderPicture();
-
 
 static struct {
     int width;
@@ -17,33 +15,28 @@ static struct {
     bool pauseSim;
     double lastFrameTime;
 
-    CircleRenderer* renderer;
+    CircleRenderer *renderer;
 
 } gDisplay;
 
 // handleReshape --
 //
 // Event handler, fired when the window is resized
-void
-handleReshape(int w, int h) {
+void handleReshape(int w, int h) {
     gDisplay.width = w;
     gDisplay.height = h;
     glViewport(0, 0, gDisplay.width, gDisplay.height);
     glutPostRedisplay();
 }
 
-void
-handleDisplay() {
-
-    // simulation and rendering work is done in the renderPicture
+void handleDisplay() {
+    // Simulation and rendering work is done in the renderPicture
     // function below
-
     renderPicture();
 
-    // the subsequent code uses OpenGL to present the state of the
+    // The subsequent code uses OpenGL to present the state of the
     // rendered image on the screen.
-
-    const Image* img = gDisplay.renderer->getImage();
+    const Image *img = gDisplay.renderer->getImage();
 
     int width = std::min(img->width, gDisplay.width);
     int height = std::min(img->height, gDisplay.height);
@@ -59,12 +52,12 @@ handleDisplay() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    // copy image data from the renderer to the OpenGL
-    // frame-buffer.  This is inefficient solution is the processing
+    // Copy image data from the renderer to the OpenGL
+    // frame-buffer.  This is inefficient solution as the processing
     // to generate the image is done in CUDA.  An improved solution
     // would render to a CUDA surface object (stored in GPU memory),
     // and then bind this surface as a texture enabling it's use in
-    // normal openGL rendering
+    // normal OpenGL rendering
     glRasterPos2i(0, 0);
     glDrawPixels(width, height, GL_RGBA, GL_FLOAT, img->data);
 
@@ -79,12 +72,10 @@ handleDisplay() {
     glutPostRedisplay();
 }
 
-
 // handleKeyPress --
 //
 // Keyboard event handler
-void
-handleKeyPress(unsigned char key, int x, int y) {
+void handleKeyPress(unsigned char key, int x, int y) {
 
     switch (key) {
     case 'q':
@@ -107,17 +98,16 @@ handleKeyPress(unsigned char key, int x, int y) {
 // renderPicture --
 //
 // At the reall work is done here, not in the display handler
-void
-renderPicture() {
+void renderPicture() {
 
     double startTime = CycleTimer::currentSeconds();
 
-    // clear screen
+    // Clear screen
     gDisplay.renderer->clearImage();
 
     double endClearTime = CycleTimer::currentSeconds();
 
-    // update particle positions and state
+    // Update particle positions and state
     if (gDisplay.updateSim) {
         gDisplay.renderer->advanceAnimation();
     }
@@ -126,7 +116,7 @@ renderPicture() {
 
     double endSimTime = CycleTimer::currentSeconds();
 
-    // render the particles< into the image
+    // Render the particles into the image
     gDisplay.renderer->render();
 
     double endRenderTime = CycleTimer::currentSeconds();
@@ -138,12 +128,11 @@ renderPicture() {
     }
 }
 
-void
-startRendererWithDisplay(CircleRenderer* renderer) {
+void startRendererWithDisplay(CircleRenderer *renderer) {
 
-    // setup the display
+    // Setup the display
 
-    const Image* img = renderer->getImage();
+    const Image *img = renderer->getImage();
 
     gDisplay.renderer = renderer;
     gDisplay.updateSim = true;
@@ -153,7 +142,7 @@ startRendererWithDisplay(CircleRenderer* renderer) {
     gDisplay.width = img->width;
     gDisplay.height = img->height;
 
-    // configure GLUT
+    // Configure GLUT
 
     glutInitWindowSize(gDisplay.width, gDisplay.height);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);

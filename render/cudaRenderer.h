@@ -7,32 +7,29 @@
 
 #include "circleRenderer.h"
 
-
 class CudaRenderer : public CircleRenderer {
 
-private:
-
-    Image* image;
+  private:
+    Image *image;
     SceneName sceneName;
 
     int numberOfCircles;
-    float* position;
-    float* velocity;
-    float* color;
-    float* radius;
+    float *position;
+    float *velocity;
+    float *color;
+    float *radius;
 
-    float* cudaDevicePosition;
-    float* cudaDeviceVelocity;
-    float* cudaDeviceColor;
-    float* cudaDeviceRadius;
-    float* cudaDeviceImageData;
+    float *cudaDevicePosition;
+    float *cudaDeviceVelocity;
+    float *cudaDeviceColor;
+    float *cudaDeviceRadius;
+    float *cudaDeviceImageData;
 
-public:
-
+  public:
     CudaRenderer();
     virtual ~CudaRenderer();
 
-    const Image* getImage();
+    const Image *getImage();
 
     void setup();
 
@@ -46,12 +43,8 @@ public:
 
     void render();
 
-    void shadePixel(
-        float pixelCenterX, float pixelCenterY,
-        float px, float py, float pz,
-        float* pixelData, 
-        int circleIndex);
+    void shadePixel(float pixelCenterX, float pixelCenterY, float px, float py, float pz,
+                    float *pixelData, int circleIndex);
 };
-
 
 #endif
