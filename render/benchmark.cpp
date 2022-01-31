@@ -113,7 +113,7 @@ void startBenchmark(CircleRenderer *renderer, int startFrame, int totalFrames, c
     printf("Overall:  %.4f sec (note units are seconds)\n", totalTime);
 }
 
-void CheckBenchmark(CircleRenderer *ref_renderer, CircleRenderer *cuda_renderer, int startFrame, int totalFrames,
+void checkBenchmark(CircleRenderer *ref_renderer, CircleRenderer *cuda_renderer, int startFrame, int totalFrames,
                     const std::string &frameFilename) {
 
     double totalClearTime = 0.f;
