@@ -41,7 +41,7 @@ void saxpyCuda(int N, float alpha, float *xarray, float *yarray, float *resultar
 
     // run kernel
     saxpy_kernel<<<blocks, threadsPerBlock>>>(N, alpha, device_x, device_y, device_result);
-    cudaThreadSynchronize();
+    cudaDeviceSynchronize();
 
     //
     // TODO copy result from GPU using cudaMemcpy

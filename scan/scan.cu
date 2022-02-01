@@ -63,7 +63,7 @@ double cudaScan(int *inarray, int *end, int *resultarray) {
     exclusive_scan(device_data, end - inarray);
 
     // Wait for any work left over to be completed.
-    cudaThreadSynchronize();
+    cudaDeviceSynchronize();
     double endTime = CycleTimer::currentSeconds();
     double overallDuration = endTime - startTime;
 
@@ -88,7 +88,7 @@ double cudaScanThrust(int *inarray, int *end, int *resultarray) {
 
     thrust::exclusive_scan(d_input, d_input + length, d_output);
 
-    cudaThreadSynchronize();
+    cudaDeviceSynchronize();
     double endTime = CycleTimer::currentSeconds();
 
     cudaMemcpy(resultarray, d_output.get(), length * sizeof(int), cudaMemcpyDeviceToHost);
@@ -130,7 +130,7 @@ double cudaFindPeaks(int *input, int length, int *output, int *output_length) {
 
     int result = find_peaks(device_input, length, device_output);
 
-    cudaThreadSynchronize();
+    cudaDeviceSynchronize();
     double endTime = CycleTimer::currentSeconds();
 
     *output_length = result;
